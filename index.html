@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no"/>
+  <title>ToDo List</title>
+  <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+    <script src="js/jquery-2.1.1.min.js"></script>
+	<script src="js/bootstrap.min.js"></script>
+	<style type="text/css">
+	.ti
+	{
+	margin-left: 5px;
+	}
+	</style>
+    <script>
+   var taskList= new Array();
+      $(document).ready(function(){
+      if(window.localStorage)
+	  {
+		taskList=JSON.parse(window.localStorage.getItem('taskList'));
+	  }
+	  
+	  if(null!=taskList)
+	  {
+		for(i=0;i<taskList.length;i++)
+		{
+			var newTask;
+			if(taskList[i].done==true)
+			{
+			newTask="<li style='text-decoration:line-through' id='" + taskList[i].key +"'><span class='ti'>" + taskList[i].task +"</span><button class='btnClear btn btn-link'><span class='glyphicon glyphicon-remove '/><span></button></li>";
+			}
+			else
+			{
+			newTask="<li style='text-decoration:none' id='" + taskList[i].key +"'><span class='ti'>" + taskList[i].task +"</span><button class='btnDone btn btn-link'><span class='glyphicon glyphicon-ok'/><span></button><button class='btnClear btn btn-link'><span class='glyphicon glyphicon-remove'/><span></button></li>";
+			}
+			$("#tl").append(newTask);
+		}
+	  }
+	  else
+	  {
+			taskList = new Array();
+	  }
+	  
+	  
+	  
+	   $("#tl").on("click",".btnClear",function(){
+			var taskkey=$(this).parent().attr("id");
+			taskList=$.grep(taskList,function(e){ return e.key != taskkey;});
+			if(window.localStorage)
+			{
+				window.localStorage.setItem('taskList',JSON.stringify(taskList));
+			}
+			$(this).parent().remove();
+         });
+		 
+		 $("#tl").on("click",".btnDone",function(){
+			var taskkey=$(this).parent().attr("id");
+			$(this).parent().css("text-decoration","line-through");
+			for(i=0;i<taskList.length;i++)
+			{	
+				if(taskList[i].key==taskkey)
+				{
+					taskList[i].done=true;
+				}
+			}
+			if(window.localStorage)
+			{
+				window.localStorage.setItem('taskList',JSON.stringify(taskList));
+			}
+			$(this).remove();
+			});
+         
+		 $("#aT").on("click",function(){
+		 
+		    var task=$("#nT").val();
+			$("#tl").append("<li id='" + Date.now() +"'><span class='ti'>" + task + "</span><button class='btnDone btn btn-link'><span class='glyphicon glyphicon-ok '/><span></button><button class='btnClear btn btn-link'><span class='glyphicon glyphicon-remove '/><span></button></li>");
+			taskList.push({key:Date.now(),task:task,done:false});
+			if(window.localStorage)
+			{
+				window.localStorage.setItem('taskList',JSON.stringify(taskList));
+			}
+			$("#nT").val('');
+         });
+		 
+        }); 
+	</script>
+   </head>
+<body>
+<div class="container">
+ <h1 class="text-center" style="color: #428bca; font-weight: bold;">ToDo List</h1>
+ <div class="input-group" style="padding:10px 0px 10px 0px">
+ <input type="text" class="form-control" style="border-radius: 15px; border-color: #428bca;" placeholder="Enter a New Task here ..." id="nT">
+ <span class="input-group-btn"><button id="aT" class="pull-right btn btn-link"><span class='glyphicon glyphicon-plus'/><span></button></span>
+ </div>
+<ul id="tl" class="list-unstyled">
+<li><span class="ti">Task1</span><button class='btnDone btn btn-link'><span class='glyphicon glyphicon-ok '/><span></button><button class='btnClear btn btn-link'><span class='glyphicon glyphicon-remove '/><span></button></li>
+<li><span class="ti">Task2</span><button class='btnDone btn btn-link'><span class='glyphicon glyphicon-ok '/><span></button><button class='btnClear btn btn-link'><span class='glyphicon glyphicon-remove '/><span></button></li>
+</ul>
+</div>
+</body>
+</html>
